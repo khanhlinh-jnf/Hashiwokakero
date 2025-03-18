@@ -125,6 +125,85 @@ def generate_conditions_of_sum_bridge_of_island(list_of_island, list_of_bridge):
     return res
 
 
+def is_valid(edges, intersections):
+    for edge1, edge2 in intersections:
+        if edge1 in edges and edge2 in edges:
+            return False
+    return True
+
+
+def is_connected(edges, nodes):
+    parent = {}
+
+    def find(x):
+        if parent[x] != x:
+            parent[x] = find(parent[x])
+        return parent[x]
+
+    def union(x, y):
+        root_x = find(x)
+        root_y = find(y)
+        if root_x != root_y:
+            parent[root_y] = root_x
+
+    for node in nodes:
+        parent[node[:2]] = node[:2]
+
+    for edge in edges:
+        union(edge[0][:2], edge[1][:2])
+
+    roots = {find(node[:2]) for node in nodes}
+    return len(roots) == 1
+
+def find_valid_connections(islands, connections, intersections):
+    valid_connections = []
+    for r in range(1, len(connections) + 1):
+        for edges in combinations(connections, r):
+            if is_connected(edges, islands) and is_valid(edges, intersections):
+                valid_connections.append(edges)
+    return valid_connections
+
+def generate_conditions_of_valid_connection(valid_connections):
+    res = {}
+    i = 0
+    for connection in valid_connections:
+        res[i] = {}
+        for edge in connection:
+            res[i][edge] = False
+        i += 1
+    return res
+
+def find_list_of_variables(condition_of_island_sum_bridge, condition_of_same_brige, condition_of_intersection_bridge, condition_of_valid_connection):
+    list_of_variables = set()
+    res = {}
+    i = 1
+    for island in condition_of_island_sum_bridge:
+        for case in condition_of_island_sum_bridge[island]:
+            for bridge in condition_of_island_sum_bridge[island][case]:
+                if bridge not in list_of_variables:
+                    list_of_variables.add(bridge)
+                    res[bridge] = i
+                    i += 1
+    for bridge in condition_of_same_brige:
+        for condition in condition_of_same_brige[bridge]:
+            if condition not in list_of_variables:
+                list_of_variables.add(condition)
+                res[bridge] = i
+                i += 1
+    for intersection in condition_of_intersection_bridge:
+        for condition in condition_of_intersection_bridge[intersection]:
+            if condition not in list_of_variables:
+                list_of_variables.add(condition)
+                res[bridge] = i
+                i += 1
+    for connection in condition_of_valid_connection:
+        for condition in condition_of_valid_connection[connection]:
+            if condition not in list_of_variables:
+                list_of_variables.add(condition)
+                res[bridge] = i
+                i += 1
+    return res, list_of_variables
+
 matrix = read_matrix("input.txt")
 list_of_islands = find_islands(matrix)
 connections = find_connections(list_of_islands)
@@ -139,24 +218,48 @@ conditions_of_intersection_bridge = generate_conditions_of_intersection_bridge(
 conditions_of_island_sum_bridge = generate_conditions_of_sum_bridge_of_island(
     list_of_islands, list_of_bridge
 )
+valid_connections = find_valid_connections(
+    list_of_islands, connections, intersections
+)
+conditions_of_valid_connection = generate_conditions_of_valid_connection(
+    valid_connections
+)
+
 
 fout = open("output.txt", "w")
-fout.write("List of condition of islands: \n")
+fout.write("List of variables: \n")
+dict_of_variables, set_of_variables = find_list_of_variables(
+    conditions_of_island_sum_bridge,
+    conditions_of_same_brige,
+    conditions_of_intersection_bridge,
+    conditions_of_valid_connection,
+)
+for x in dict_of_variables:
+    fout.write(str(x) + " : " + str(dict_of_variables[x]) + "\n")
+fout.write("\n")
+fout.write("List of condition of islands: DNF \n")
 for x in list_of_islands:
     fout.write(str(x) + " :\n")
     for y in conditions_of_island_sum_bridge[x]:
         fout.write(str(y) + " : " + str(conditions_of_island_sum_bridge[x][y]) + "\n")
     fout.write("\n")
-fout.write("List of condition limit bridge: \n")
+fout.write("List of condition limit bridge: Not A or Not B \n")
 for x in conditions_of_same_brige:
     fout.write(str(x) + " :\n")
     for y in conditions_of_same_brige[x]:
         fout.write(str(y) + " : " + str(conditions_of_same_brige[x][y]) + "\n")
     fout.write("\n")
-fout.write("List of condition of intersections: \n")
+fout.write("List of condition of intersections: Not A or Not B \n")
 for x in conditions_of_intersection_bridge:
     fout.write(str(x) + " :\n")
     for y in conditions_of_intersection_bridge[x]:
         fout.write(str(y) + " : " + str(conditions_of_intersection_bridge[x][y]) + "\n")
     fout.write("\n")
+fout.write("List of valid connections: DNF \n")
+for x in conditions_of_valid_connection:
+    fout.write(str(x) + " :\n")
+    for y in conditions_of_valid_connection[x]:
+        fout.write(str(y) + " : " + str(conditions_of_valid_connection[x][y]) + "\n")
+    fout.write("\n")
+
 fout.close()
