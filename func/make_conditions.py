@@ -184,7 +184,7 @@ def is_connected(edges, nodes):
 
 def find_valid_connections(islands, connections, intersections):
     valid_connections = []
-    for r in range(1, len(connections) + 1):
+    for r in range(len(islands)-1, len(connections) + 1):
         for edges in combinations(connections, r):
             if is_connected(edges, islands) and is_valid(edges, intersections):
                 valid_connections.append(edges)
@@ -206,7 +206,7 @@ def find_list_of_variables(
     condition_of_island_sum_bridge,
     condition_of_same_brige,
     condition_of_intersection_bridge,
-    condition_of_valid_connection,
+    connections,
 ):
     list_of_variables = set()
     res1 = {}
@@ -222,9 +222,8 @@ def find_list_of_variables(
     for intersection in condition_of_intersection_bridge:
         for case in condition_of_intersection_bridge[intersection]:
             list_of_variables.add(case)
-    for connection in condition_of_valid_connection:
-        for case in condition_of_valid_connection[connection]:
-            list_of_variables.add(case)
+    for connection in connections:
+        list_of_variables.add(connection)
     for variable in list_of_variables:
         res1[variable] = i
         res2[i] = variable
@@ -271,12 +270,6 @@ def creat_conditions_file(input_file, information_file, conditions_file, dict_of
             list_of_islands, list_bridge_of_island
         )
     )
-    valid_connections = find_valid_connections(
-        list_of_islands, connections, intersections
-    )
-    conditions_of_valid_connection = generate_conditions_of_valid_connection(
-        valid_connections
-    )
     conditions_of_bridge_equivalent = generate_conditions_of_bridge_equivalent(
         connections
     )
@@ -288,7 +281,7 @@ def creat_conditions_file(input_file, information_file, conditions_file, dict_of
             conditions_of_island_sum_bridge,
             conditions_of_same_brige,
             conditions_of_intersection_bridge,
-            conditions_of_valid_connection,
+            connections,
         )
     )
 
@@ -343,34 +336,6 @@ def creat_conditions_file(input_file, information_file, conditions_file, dict_of
                 fout.write("\n")
         fout.write("\n")
 
-    # fout.write("List of condition of islands (only one sum): \n")
-    # for x in conditions_of_island_sum_bridge:
-    #     fout.write(str(x) + " :\n")
-    #     for i in range(len(conditions_of_island_sum_bridge[x])):
-    #         for j in range(i+1, len(conditions_of_island_sum_bridge[x])):
-    #             fout.write("(")
-    #             for y in conditions_of_island_sum_bridge[x][i]:
-    #                 fout.write(f"-{str(dict_of_variables[y])}")
-    #                 cout.write(f"-{str(dict_of_variables[y])}")
-    #                 if y != list(conditions_of_island_sum_bridge[x][i].keys())[-1]:
-    #                     fout.write(" or ")
-    #                     cout.write("| ")
-    #             fout.write(")")
-    #             fout.write(" or ")
-    #             cout.write("| ")
-    #             fout.write("(")
-    #             for y in conditions_of_island_sum_bridge[x][j]:
-    #                 fout.write(f"-{str(dict_of_variables[y])}")
-    #                 cout.write(f"-{str(dict_of_variables[y])}")
-    #                 if y != list(conditions_of_island_sum_bridge[x][j].keys())[-1]:
-    #                     fout.write(" or ")
-    #                     cout.write("| ")
-    #                 else:
-    #                     cout.write("\n")
-    #             fout.write(")\n")
-    #     fout.write("\n")
-    # fout.write("\n")
-
     fout.write("List of condition limit bridge: Not A or Not B \n")
     for x in conditions_of_same_brige:
         fout.write(str(x) + " :\n")
@@ -421,25 +386,6 @@ def creat_conditions_file(input_file, information_file, conditions_file, dict_of
             else:
                 fout.write("\n")
         fout.write("\n")
-
-    fout.write("List of valid connections: DNF \n")
-    for x in conditions_of_valid_connection:
-        fout.write("(")
-        cout.write("(")
-        for y in conditions_of_valid_connection[x]:
-            fout.write(str(dict_of_variables[y]))
-            cout.write(str(dict_of_variables[y]))
-            if y != list(conditions_of_valid_connection[x].keys())[-1]:
-                fout.write(" and ")
-                cout.write("&")
-        fout.write(")")
-        cout.write(")")
-        if x != list(conditions_of_valid_connection.keys())[-1]:
-            fout.write(" or ")
-            cout.write("| ")
-        else:
-            fout.write("\n")
-            cout.write("\n")
 
     fout.close()
 

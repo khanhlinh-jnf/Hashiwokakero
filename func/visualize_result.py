@@ -47,23 +47,25 @@ def read_solution(file_path):
     return solution
 
 def visualize_result(matrix, solution):
-	for pair in solution:
-		x1, y1 = pair[0]
-		x2, y2 = pair[1]
-		n = pair[2]
+    for pair in solution:
+        x1, y1 = pair[0]
+        x2, y2 = pair[1]
+        n = pair[2]
 
-		if x1 == x2:
-			symbol = "-" if n == 1 else "="
-			for i in range(y1 + 1, y2):
-				matrix[x1][i] = symbol
-		elif y1 == y2:
-			symbol = "|" if n == 1 else "$"
-			for i in range(x1 + 1, x2):
-				matrix[i][y1] = symbol
+        if x1 == x2:
+            symbol = "-" if n == 1 else "="
+            for i in range(y1 + 1, y2):
+                matrix[x1][i] = symbol
+        elif y1 == y2:
+            symbol = "|" if n == 1 else "$"
+            for i in range(x1 + 1, x2):
+                matrix[i][y1] = symbol
 def visualize(input_file,result_file, output_file):
-	matrix = read_matrix(input_file)
-	solution = read_solution(result_file)
-	visualize_result(matrix, solution)
-	fout = open(output_file, "w")
-	for row in matrix:
-		fout.write(str(row) + "\n")
+    matrix = read_matrix(input_file)
+    solution = read_solution(result_file)
+    visualize_result(matrix, solution)
+    fout = open(output_file, "w")
+    for row in matrix:
+        for col in row:
+            fout.write(col + " ")
+        fout.write("\n")
