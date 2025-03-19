@@ -39,11 +39,10 @@ def solve_cnf(file_input, file_dict, file_output):
 
         with open(file_output, "w") as f:
             for result in positive_vars:
-                f.write(f"{result}: {variable_map[result]}\n")
+                if variable_map[result][len(variable_map[result]) - 2] != ")":
+                    f.write(f"{variable_map[result]}\n")
     else:
         with open(file_output, "w") as f:
             f.write("UNSAT\n")  # Không có nghiệm hợp lệ
 
     solver.delete()  # Giải phóng bộ nhớ
-    
-

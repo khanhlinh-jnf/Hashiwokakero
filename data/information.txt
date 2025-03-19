@@ -1,0 +1,107 @@
+List of variables: 
+(((0, 0, 2), (0, 2, 1)), 1) : 1
+(((4, 0, 3), (4, 4, 2)), 2) : 2
+(((2, 0, 4), (2, 2, 3)), 2) : 3
+(((2, 0, 4), (4, 0, 3)), 1) : 4
+((4, 0, 3), (4, 4, 2)) : 5
+(((0, 0, 2), (2, 0, 4)), 1) : 6
+(((2, 2, 3), (2, 4, 1)), 1) : 7
+(((4, 0, 3), (4, 4, 2)), 1) : 8
+(((2, 0, 4), (2, 2, 3)), 1) : 9
+(((0, 2, 1), (2, 2, 3)), 1) : 10
+((0, 0, 2), (0, 2, 1)) : 11
+((2, 4, 1), (4, 4, 2)) : 12
+((2, 0, 4), (4, 0, 3)) : 13
+((2, 2, 3), (2, 4, 1)) : 14
+((2, 0, 4), (2, 2, 3)) : 15
+(((2, 0, 4), (4, 0, 3)), 2) : 16
+(((2, 4, 1), (4, 4, 2)), 1) : 17
+((0, 0, 2), (2, 0, 4)) : 18
+(((0, 0, 2), (2, 0, 4)), 2) : 19
+((0, 2, 1), (2, 2, 3)) : 20
+
+List of condition of islands: DNF 
+(0, 0, 2) :
+(19) or (1 and 6)
+
+(0, 2, 1) :
+(1) or (10)
+
+(2, 0, 4) :
+(19 and 3) or (19 and 16) or (3 and 16) or (6 and 9 and 16) or (6 and 3 and 4) or (19 and 9 and 4)
+
+(2, 2, 3) :
+(10 and 3) or (3 and 7) or (10 and 9 and 7)
+
+(2, 4, 1) :
+(7) or (17)
+
+(4, 0, 3) :
+(4 and 2) or (16 and 8)
+
+(4, 4, 2) :
+(2) or (17 and 8)
+
+List of condition unvalid of islands: DNF 
+(0, 0, 2) :
+(-1 or -19)
+
+(0, 2, 1) :
+(-1 or -10)
+
+(2, 0, 4) :
+(-6 or -3 or -16) and (-19 or -9 or -16) and (-19 or -3 or -4) and (-19 or -3 or -16)
+
+(2, 2, 3) :
+(-10 or -3 or -7)
+
+(2, 4, 1) :
+(-7 or -17)
+
+(4, 0, 3) :
+(-16 or -2)
+
+(4, 4, 2) :
+(-17 or -2)
+
+List of condition limit bridge: Not A or Not B 
+((0, 0, 2), (2, 0, 4)) :
+-6 or -19
+
+((2, 0, 4), (2, 2, 3)) :
+-9 or -3
+
+((2, 0, 4), (4, 0, 3)) :
+-4 or -16
+
+((4, 0, 3), (4, 4, 2)) :
+-8 or -2
+
+List of condition of intersections: Not A or Not B 
+List of condition of bridge equivalent: CNF 
+((0, 0, 2), (0, 2, 1)) :
+(-11 or 1) and (11 or -1)
+
+((0, 0, 2), (2, 0, 4)) :
+(-18 or 6 or 19) and (18 or -6) and (18 or -19)
+
+((0, 2, 1), (2, 2, 3)) :
+(-20 or 10) and (20 or -10)
+
+((2, 0, 4), (2, 2, 3)) :
+(-15 or 9 or 3) and (15 or -9) and (15 or -3)
+
+((2, 0, 4), (4, 0, 3)) :
+(-13 or 4 or 16) and (13 or -4) and (13 or -16)
+
+((2, 2, 3), (2, 4, 1)) :
+(-14 or 7) and (14 or -7)
+
+((2, 4, 1), (4, 4, 2)) :
+(-12 or 17) and (12 or -17)
+
+((4, 0, 3), (4, 4, 2)) :
+(-5 or 8 or 2) and (5 or -8) and (5 or -2)
+
+List of valid connections: DNF 
+(11 and 18 and 20 and 13 and 14 and 12) or (11 and 18 and 20 and 13 and 14 and 5) or (11 and 18 and 20 and 13 and 12 and 5) or (11 and 18 and 20 and 14 and 12 and 5) or (11 and 18 and 15 and 13 and 14 and 12) or (11 and 18 and 15 and 13 and 14 and 5) or (11 and 18 and 15 and 13 and 12 and 5) or (11 and 18 and 15 and 14 and 12 and 5) or (11 and 18 and 13 and 14 and 12 and 5) or (11 and 20 and 15 and 13 and 14 and 12) or (11 and 20 and 15 and 13 and 14 and 5) or (11 and 20 and 15 and 13 and 12 and 5) or (11 and 20 and 15 and 14 and 12 and 5) or (11 and 20 and 13 and 14 and 12 and 5) or (18 and 20 and 15 and 13 and 14 and 12) or (18 and 20 and 15 and 13 and 14 and 5) or (18 and 20 and 15 and 13 and 12 and 5) or (18 and 20 and 15 and 14 and 12 and 5) or (18 and 20 and 13 and 14 and 12 and 5) or (11 and 18 and 20 and 15 and 13 and 14 and 12) or (11 and 18 and 20 and 15 and 13 and 14 and 5) or (11 and 18 and 20 and 15 and 13 and 12 and 5) or (11 and 18 and 20 and 15 and 14 and 12 and 5) or (11 and 18 and 20 and 13 and 14 and 12 and 5) or (11 and 18 and 15 and 13 and 14 and 12 and 5) or (11 and 20 and 15 and 13 and 14 and 12 and 5) or (18 and 20 and 15 and 13 and 14 and 12 and 5) or (11 and 18 and 20 and 15 and 13 and 14 and 12 and 5)

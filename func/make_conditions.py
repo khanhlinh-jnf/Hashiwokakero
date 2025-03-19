@@ -111,11 +111,37 @@ def find_subsets_with_sum_k(data, k):
     return valid_subsets
 
 
+def find_subsets_with_greater_k(data, k):
+    n = len(data)
+    valid_subsets = []
+    for size in range(1, n + 1):
+        for subset in combinations(data, size):
+            total_weight = sum(item[1] for item in subset)
+            info_set = set(item[0] for item in subset)
+            if len(info_set) == len(subset) and total_weight > k:
+                valid_subsets.append(subset)
+    return valid_subsets
+
+
 def generate_conditions_of_sum_bridge_of_island(list_of_island, list_of_bridge):
     res = {}
     for island in list_of_island:
         res[island] = {}
         list_case = find_subsets_with_sum_k(list_of_bridge[island], island[2])
+        i = 0
+        for case in list_case:
+            res[island][i] = {}
+            for bridge in case:
+                res[island][i][bridge] = False
+            i += 1
+    return res
+
+
+def generate_conditions_of_sum_bridge_unvalid_of_island(list_of_island, list_of_bridge):
+    res = {}
+    for island in list_of_island:
+        res[island] = {}
+        list_case = find_subsets_with_greater_k(list_of_bridge[island], island[2])
         i = 0
         for case in list_case:
             res[island][i] = {}
@@ -222,14 +248,17 @@ def generate_conditions_of_bridge_equivalent(list_of_bridge):
             res[bridge][1] = {bridge: False, name1: True}
     return res
 
-def main():
-    matrix = read_matrix("input.txt")
+
+def creat_conditions_file(input_file, information_file, conditions_file, dict_of_variables_file):
+    matrix = read_matrix(input_file)
     list_of_islands = find_islands(matrix)
     connections = find_connections(list_of_islands)
     intersections = find_intersections(list_of_islands)
     set_edges_of_island = find_set_edges_of_island(list_of_islands, connections)
     conditions_of_island, conditions_of_same_brige, list_bridge_of_island = (
-        generate_conditions_of_island_and_same_bridge(list_of_islands, set_edges_of_island)
+        generate_conditions_of_island_and_same_bridge(
+            list_of_islands, set_edges_of_island
+        )
     )
     conditions_of_intersection_bridge = generate_conditions_of_intersection_bridge(
         intersections
@@ -237,23 +266,33 @@ def main():
     conditions_of_island_sum_bridge = generate_conditions_of_sum_bridge_of_island(
         list_of_islands, list_bridge_of_island
     )
-    valid_connections = find_valid_connections(list_of_islands, connections, intersections)
+    conditions_of_island_sum_bridge_unvalid = (
+        generate_conditions_of_sum_bridge_unvalid_of_island(
+            list_of_islands, list_bridge_of_island
+        )
+    )
+    valid_connections = find_valid_connections(
+        list_of_islands, connections, intersections
+    )
     conditions_of_valid_connection = generate_conditions_of_valid_connection(
         valid_connections
     )
-    conditions_of_bridge_equivalent = generate_conditions_of_bridge_equivalent(connections)
-
-    fout = open("output.txt", "w")
-    cout = open("conditions.txt", "w")
+    conditions_of_bridge_equivalent = generate_conditions_of_bridge_equivalent(
+        connections
+    )
+    fout = open(information_file, "w")
+    cout = open(conditions_file, "w")
     fout.write("List of variables: \n")
-    dict_of_variables,convert_dict_of_variables, set_of_variables = find_list_of_variables(
-        conditions_of_island_sum_bridge,
-        conditions_of_same_brige,
-        conditions_of_intersection_bridge,
-        conditions_of_valid_connection,
+    dict_of_variables, convert_dict_of_variables, set_of_variables = (
+        find_list_of_variables(
+            conditions_of_island_sum_bridge,
+            conditions_of_same_brige,
+            conditions_of_intersection_bridge,
+            conditions_of_valid_connection,
+        )
     )
 
-    dout = open("dict_of_variables.txt", "w")
+    dout = open(dict_of_variables_file, "w")
     for x in convert_dict_of_variables:
         dout.write(str(x) + " : " + str(convert_dict_of_variables[x]) + "\n")
     dout.close()
@@ -273,7 +312,7 @@ def main():
                 cout.write(str(dict_of_variables[z]))
                 if z != list(conditions_of_island_sum_bridge[x][y].keys())[-1]:
                     fout.write(" and ")
-                    cout.write("&")
+                    cout.write("& ")
             fout.write(")")
             cout.write(")")
             if y != list(conditions_of_island_sum_bridge[x].keys())[-1]:
@@ -284,33 +323,53 @@ def main():
                 cout.write("\n")
         fout.write("\n")
 
-    fout.write("List of condition of islands (only one sum): \n")
-    for x in conditions_of_island_sum_bridge:
+    fout.write("List of condition unvalid of islands: DNF \n")
+    for x in list_of_islands:
         fout.write(str(x) + " :\n")
-        for i in range(len(conditions_of_island_sum_bridge[x])):
-            for j in range(i+1, len(conditions_of_island_sum_bridge[x])):
-                fout.write("(")
-                for y in conditions_of_island_sum_bridge[x][i]:
-                    fout.write(f"-{str(dict_of_variables[y])}")
-                    cout.write(f"-{str(dict_of_variables[y])}")
-                    if y != list(conditions_of_island_sum_bridge[x][i].keys())[-1]:
-                        fout.write(" or ")
-                        cout.write("| ")
-                fout.write(")")
-                fout.write(" or ")
-                cout.write("| ")
-                fout.write("(")
-                for y in conditions_of_island_sum_bridge[x][j]:
-                    fout.write(f"-{str(dict_of_variables[y])}")
-                    cout.write(f"-{str(dict_of_variables[y])}")
-                    if y != list(conditions_of_island_sum_bridge[x][j].keys())[-1]:
-                        fout.write(" or ")
-                        cout.write("| ")
-                    else:
-                        cout.write("\n")
-                fout.write(")\n")
+        for y in conditions_of_island_sum_bridge_unvalid[x]:
+            fout.write("(")
+            for z in conditions_of_island_sum_bridge_unvalid[x][y]:
+                fout.write("-" + str(dict_of_variables[z]))
+                cout.write("-" + str(dict_of_variables[z]))
+                if z != list(conditions_of_island_sum_bridge_unvalid[x][y].keys())[-1]:
+                    fout.write(" or ")
+                    cout.write("| ")
+                else:
+                    cout.write("\n")
+            fout.write(")")
+            if y != list(conditions_of_island_sum_bridge_unvalid[x].keys())[-1]:
+                fout.write(" and ")
+            else:
+                fout.write("\n")
         fout.write("\n")
-    fout.write("\n")
+
+    # fout.write("List of condition of islands (only one sum): \n")
+    # for x in conditions_of_island_sum_bridge:
+    #     fout.write(str(x) + " :\n")
+    #     for i in range(len(conditions_of_island_sum_bridge[x])):
+    #         for j in range(i+1, len(conditions_of_island_sum_bridge[x])):
+    #             fout.write("(")
+    #             for y in conditions_of_island_sum_bridge[x][i]:
+    #                 fout.write(f"-{str(dict_of_variables[y])}")
+    #                 cout.write(f"-{str(dict_of_variables[y])}")
+    #                 if y != list(conditions_of_island_sum_bridge[x][i].keys())[-1]:
+    #                     fout.write(" or ")
+    #                     cout.write("| ")
+    #             fout.write(")")
+    #             fout.write(" or ")
+    #             cout.write("| ")
+    #             fout.write("(")
+    #             for y in conditions_of_island_sum_bridge[x][j]:
+    #                 fout.write(f"-{str(dict_of_variables[y])}")
+    #                 cout.write(f"-{str(dict_of_variables[y])}")
+    #                 if y != list(conditions_of_island_sum_bridge[x][j].keys())[-1]:
+    #                     fout.write(" or ")
+    #                     cout.write("| ")
+    #                 else:
+    #                     cout.write("\n")
+    #             fout.write(")\n")
+    #     fout.write("\n")
+    # fout.write("\n")
 
     fout.write("List of condition limit bridge: Not A or Not B \n")
     for x in conditions_of_same_brige:
@@ -384,4 +443,3 @@ def main():
 
     fout.close()
 
-main()
