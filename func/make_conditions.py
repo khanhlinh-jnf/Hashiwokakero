@@ -151,57 +151,6 @@ def generate_conditions_of_sum_bridge_unvalid_of_island(list_of_island, list_of_
     return res
 
 
-def is_valid(edges, intersections):
-    for edge1, edge2 in intersections:
-        if edge1 in edges and edge2 in edges:
-            return False
-    return True
-
-
-def is_connected(edges, nodes):
-    parent = {}
-
-    def find(x):
-        if parent[x] != x:
-            parent[x] = find(parent[x])
-        return parent[x]
-
-    def union(x, y):
-        root_x = find(x)
-        root_y = find(y)
-        if root_x != root_y:
-            parent[root_y] = root_x
-
-    for node in nodes:
-        parent[node[:2]] = node[:2]
-
-    for edge in edges:
-        union(edge[0][:2], edge[1][:2])
-
-    roots = {find(node[:2]) for node in nodes}
-    return len(roots) == 1
-
-
-def find_valid_connections(islands, connections, intersections):
-    valid_connections = []
-    for r in range(len(islands)-1, len(connections) + 1):
-        for edges in combinations(connections, r):
-            if is_connected(edges, islands) and is_valid(edges, intersections):
-                valid_connections.append(edges)
-    return valid_connections
-
-
-def generate_conditions_of_valid_connection(valid_connections):
-    res = {}
-    i = 0
-    for connection in valid_connections:
-        res[i] = {}
-        for edge in connection:
-            res[i][edge] = False
-        i += 1
-    return res
-
-
 def find_list_of_variables(
     condition_of_island_sum_bridge,
     condition_of_same_brige,
@@ -284,7 +233,6 @@ def creat_conditions_file(input_file, information_file, conditions_file, dict_of
             connections,
         )
     )
-
     dout = open(dict_of_variables_file, "w")
     for x in convert_dict_of_variables:
         dout.write(str(x) + " : " + str(convert_dict_of_variables[x]) + "\n")
@@ -388,4 +336,5 @@ def creat_conditions_file(input_file, information_file, conditions_file, dict_of
         fout.write("\n")
 
     fout.close()
-
+    cout.close()
+    dout.close()

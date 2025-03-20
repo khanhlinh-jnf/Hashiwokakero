@@ -14,5 +14,5 @@ make_conditions.creat_conditions_file(
     "./data/dict_of_variables.txt",
 )
 convert_dnf_2_cnf.dnf_to_cnf("./data/conditions.txt", "./data/cnf.txt")
-solver.solve_cnf("./data/cnf.txt", "./data/dict_of_variables.txt", "./data/result.txt")
+solver.solve_cnf(input_file,"./data/cnf.txt", "./data/dict_of_variables.txt", "./data/result.txt")
 visualize_result.visualize(input_file, "./data/result.txt", output_file)
