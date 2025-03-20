@@ -3,6 +3,8 @@ import func.convert_dnf_2_cnf as convert_dnf_2_cnf
 import func.solver as solver
 import func.visualize_result as visualize_result
 
+'''hello world'''
+
 choice = input("Number of input: ")
 input_file = "input/"+"input" + choice + ".txt"
 output_file = "output/"+"output" + choice + ".txt"
