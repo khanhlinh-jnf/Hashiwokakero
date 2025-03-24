@@ -197,7 +197,7 @@ def generate_conditions_of_bridge_equivalent(list_of_bridge):
     return res
 
 
-def creat_conditions_file(input_file, information_file, conditions_file, dict_of_variables_file):
+def creat_conditions_file(input_file, conditions_file, dict_of_variables_file):
     matrix = read_matrix(input_file)
     list_of_islands = find_islands(matrix)
     connections = find_connections(list_of_islands)
@@ -222,9 +222,8 @@ def creat_conditions_file(input_file, information_file, conditions_file, dict_of
     conditions_of_bridge_equivalent = generate_conditions_of_bridge_equivalent(
         connections
     )
-    fout = open(information_file, "w")
+
     cout = open(conditions_file, "w")
-    fout.write("List of variables: \n")
     dict_of_variables, convert_dict_of_variables, set_of_variables = (
         find_list_of_variables(
             conditions_of_island_sum_bridge,
@@ -238,103 +237,53 @@ def creat_conditions_file(input_file, information_file, conditions_file, dict_of
         dout.write(str(x) + " : " + str(convert_dict_of_variables[x]) + "\n")
     dout.close()
 
-    for x in dict_of_variables:
-        fout.write(str(x) + " : " + str(dict_of_variables[x]) + "\n")
-    fout.write("\n")
-
-    fout.write("List of condition of islands: DNF \n")
     for x in list_of_islands:
-        fout.write(str(x) + " :\n")
         for y in conditions_of_island_sum_bridge[x]:
-            fout.write("(")
             cout.write("(")
             for z in conditions_of_island_sum_bridge[x][y]:
-                fout.write(str(dict_of_variables[z]))
                 cout.write(str(dict_of_variables[z]))
                 if z != list(conditions_of_island_sum_bridge[x][y].keys())[-1]:
-                    fout.write(" and ")
                     cout.write("& ")
-            fout.write(")")
             cout.write(")")
             if y != list(conditions_of_island_sum_bridge[x].keys())[-1]:
-                fout.write(" or ")
                 cout.write("| ")
             else:
-                fout.write("\n")
                 cout.write("\n")
-        fout.write("\n")
 
-    fout.write("List of condition unvalid of islands: DNF \n")
     for x in list_of_islands:
-        fout.write(str(x) + " :\n")
         for y in conditions_of_island_sum_bridge_unvalid[x]:
-            fout.write("(")
             for z in conditions_of_island_sum_bridge_unvalid[x][y]:
-                fout.write("-" + str(dict_of_variables[z]))
                 cout.write("-" + str(dict_of_variables[z]))
                 if z != list(conditions_of_island_sum_bridge_unvalid[x][y].keys())[-1]:
-                    fout.write(" or ")
                     cout.write("| ")
                 else:
                     cout.write("\n")
-            fout.write(")")
-            if y != list(conditions_of_island_sum_bridge_unvalid[x].keys())[-1]:
-                fout.write(" and ")
-            else:
-                fout.write("\n")
-        fout.write("\n")
 
-    fout.write("List of condition limit bridge: Not A or Not B \n")
     for x in conditions_of_same_brige:
-        fout.write(str(x) + " :\n")
         for y in conditions_of_same_brige[x]:
-            fout.write("-" + str(dict_of_variables[y]))
             cout.write("-" + str(dict_of_variables[y]))
             if y != list(conditions_of_same_brige[x].keys())[-1]:
-                fout.write(" or ")
                 cout.write("| ")
             else:
-                fout.write("\n")
                 cout.write("\n")
-        fout.write("\n")
 
-    fout.write("List of condition of intersections: Not A or Not B \n")
     for x in conditions_of_intersection_bridge:
-        fout.write(str(x) + " :\n")
         for y in conditions_of_intersection_bridge[x]:
-            fout.write("-" + str(dict_of_variables[y]))
             cout.write("-" + str(dict_of_variables[y]))
             if y != list(conditions_of_intersection_bridge[x].keys())[-1]:
-                fout.write(" or ")
                 cout.write("| ")
             else:
-                fout.write("\n")
                 cout.write("\n")
-        fout.write("\n")
 
-    fout.write("List of condition of bridge equivalent: CNF \n")
     for x in conditions_of_bridge_equivalent:
-        fout.write(str(x) + " :\n")
         for y in conditions_of_bridge_equivalent[x]:
-            fout.write("(")
             for z in conditions_of_bridge_equivalent[x][y]:
                 if not conditions_of_bridge_equivalent[x][y][z]:
-                    fout.write(str(dict_of_variables[z]))
                     cout.write(str(dict_of_variables[z]))
                 else:
-                    fout.write("-" + str(dict_of_variables[z]))
                     cout.write("-" + str(dict_of_variables[z]))
                 if z != list(conditions_of_bridge_equivalent[x][y].keys())[-1]:
-                    fout.write(" or ")
                     cout.write("| ")
-            fout.write(")")
             cout.write("\n")
-            if y != list(conditions_of_bridge_equivalent[x].keys())[-1]:
-                fout.write(" and ")
-            else:
-                fout.write("\n")
-        fout.write("\n")
-
-    fout.close()
     cout.close()
     dout.close()
