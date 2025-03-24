@@ -4,6 +4,21 @@ To install the library, run the following command in your terminal:
 ```bash
 pip install python-sat
 ```
+## Choose method to run by changing directory
+There are 3 methods to solve the problem. You can choose the method you want to run by changing the directory to the method you want to run. Here is the list of methods:
+- 1: Brute force
+```bash
+cd brute-force
+```
+- 2: Backtracking
+```bash
+cd backtracking
+```
+- 3: SAT
+```bash
+cd pySAT
+```
+
 ## How to run the code
 To run the code, run the following command in your terminal:
 ```bash
