@@ -28,7 +28,11 @@ cd brute-force
 ```bash
 cd backtracking
 ```
-- 3: SAT
+- 3: astar
+```bash
+cd astar
+```
+- 4: pySAT
 ```bash
 cd pySAT
 ```

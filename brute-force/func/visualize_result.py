@@ -10,28 +10,17 @@ def read_matrix(file_path):
     return matrix
 
 def parse_custom_tuple(line):
-    """Chuyển đổi chuỗi từ dạng (((a, b, c), (d, e, f)), n) thành ((a, b), (d, e), n)."""
-    line = line.strip()  # Xóa khoảng trắng đầu cuối
+    line = line.strip() 
     if not line.startswith("(") or not line.endswith(")"):  
-        return None  # Không hợp lệ nếu không có dấu ngoặc
-
-    # Loại bỏ dấu ngoặc ngoài cùng
+        return None 
     line = line[1:-1]  
-
-    # Tách phần số cuối (n) khỏi phần tuple chính
-    parts = line.rsplit(",", 1)  # Chia từ cuối, giữ tối đa 1 dấu phẩy
-    tuple_part = parts[0].strip()  # Phần tuple chính
-    last_number = int(parts[1].strip())  # Số cuối (n)
-
-    # Xóa dấu ngoặc ngoài cùng của phần tuple chính
+    parts = line.rsplit(",", 1)  
+    tuple_part = parts[0].strip()  
+    last_number = int(parts[1].strip()) 
     tuple_part = tuple_part[1:-1]
-
-    # Chia tiếp hai phần (a, b, c) và (d, e, f)
-    sub_parts = tuple_part.split("), (")  # Tách hai tuple con
-    first_tuple = tuple(map(int, sub_parts[0].replace("(", "").replace(")", "").split(",")))  # Chuyển thành số
+    sub_parts = tuple_part.split("), (")  
+    first_tuple = tuple(map(int, sub_parts[0].replace("(", "").replace(")", "").split(",")))  
     second_tuple = tuple(map(int, sub_parts[1].replace("(", "").replace(")", "").split(",")))
-
-    # Chỉ lấy 2 số đầu của mỗi tuple
     first_tuple = first_tuple[:2]
     second_tuple = second_tuple[:2]
 
