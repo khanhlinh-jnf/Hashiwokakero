@@ -79,7 +79,7 @@ def solve_sat(filename: str) -> Optional[Dict[int, bool]]:
     return backtrack(clauses, assignment, clause_status, all_vars)
 
 if __name__ == "__main__":
-    filename = "..//data//test.txt"
+    filename = "..//data//cnf-01.txt"
     result = solve_sat(filename)
     
     if result is None:

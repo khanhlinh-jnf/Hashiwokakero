@@ -1,6 +1,6 @@
 import heapq
 import itertools
-from typing import List, Dict, Optional, Set
+from typing import List, Dict, Set, Optional
 
 def parse_clauses(filename: str) -> List[List[int]]:
     with open(filename, 'r') as f:
@@ -21,95 +21,81 @@ def is_clause_satisfied(clause: List[int], assignment: Dict[int, bool]) -> bool:
                 return True
     return False
 
-def update_clause_status(clause: List[int], assignment: Dict[int, bool]) -> (bool, bool):
-    satisfied = False
-    undecided = False
-    for literal in clause:
-        var = abs(literal)
-        value = assignment.get(var, None)
-        if value is not None:
-            if (literal > 0 and value) or (literal < 0 and not value):
-                satisfied = True
-                break
-        else:
-            undecided = True
-    return satisfied, undecided
-
-def is_satisfied(clause_status: Dict[int, bool], assignment: Dict[int, bool], clauses: List[List[int]]) -> bool:
-    if not all(clause_status.values()):
-        return False
-    all_vars = {abs(literal) for clause in clauses for literal in clause}
-    return all(var in assignment for var in all_vars)
-
-def get_related_clauses(clauses: List[List[int]], var: int) -> List[int]:
-    related = []
-    for idx, clause in enumerate(clauses):
-        if any(abs(literal) == var for literal in clause):
-            related.append(idx)
-    return related
-
-def heuristic(clauses: List[List[int]], assignment: Dict[int, bool]) -> int:
-    unsat = 0
-    for clause in clauses:
+def count_unsatisfied_clauses(cnf: List[List[int]], assignment: Dict[int, bool]) -> int:
+    unsatisfied_count = 0
+    for clause in cnf:
         if not is_clause_satisfied(clause, assignment):
-            unsat += 1
-    return unsat
+            unsatisfied_count += 1
+    return unsatisfied_count
 
-def astar_sat(clauses: List[List[int]]) -> Optional[Dict[int, bool]]:
-    all_vars: Set[int] = {abs(literal) for clause in clauses for literal in clause}
-    initial_assignment: Dict[int, bool] = {}
-    clause_status = {}
-    for idx, clause in enumerate(clauses):
-        sat, und = update_clause_status(clause, initial_assignment)
-        clause_status[idx] = sat or und
+def heuristic(assignment: Dict[int, bool], cnf: List[List[int]], all_vars: Set[int]) -> int:
+    unassigned = len(all_vars - set(assignment.keys()))  # Convert keys to set
+    unsatisfied = count_unsatisfied_clauses(cnf, assignment)
+    return unassigned + 2 * unsatisfied
 
-    h = heuristic(clauses, initial_assignment)
-    g = len(initial_assignment)
-    f = g + h
+def next_literal(assignment: Dict[int, bool], cnf: List[List[int]], all_vars: Set[int]) -> Optional[int]:
+    literal_exist = {}
+    for clause in cnf:
+        if not is_clause_satisfied(clause, assignment):
+            for literal in clause:
+                var = abs(literal)
+                if var not in assignment:
+                    literal_exist[var] = literal_exist.get(var, 0) + 1
+    
+    if literal_exist:
+        return max(literal_exist, key=literal_exist.get)
+    unassigned = all_vars - set(assignment.keys())  # Convert keys to set
+    return min(unassigned) if unassigned else None
 
+
+
+def astar(cnf: List[List[int]], all_vars: Set[int]) -> Optional[Dict[int, bool]]:
+    open_list = []
+    closed_set = set()
     counter = itertools.count()
-    heap = []
-    heapq.heappush(heap, (f, g, next(counter), initial_assignment, clause_status))
 
-    while heap:
-        current_f, current_g, _, assignment, clause_status = heapq.heappop(heap)
+    initial_state = {}
+    initial_h = heuristic(initial_state, cnf, all_vars)
+    heapq.heappush(open_list, (initial_h, 0, next(counter), initial_state))
 
-        if is_satisfied(clause_status, assignment, clauses):
-            return assignment
-
-        var = next((v for v in all_vars if v not in assignment), None)
-        if var is None:
+    while open_list:
+        f_score, g_score, _, state = heapq.heappop(open_list)
+    
+        if all(is_clause_satisfied(clause, state) for clause in cnf):
+            return state
+        
+        state_key = frozenset(state.items())
+        if state_key in closed_set:
+            continue
+        closed_set.add(state_key)
+        
+        next_var = next_literal(state, cnf, all_vars)
+        if next_var is None:
             continue
 
         for value in [True, False]:
-            new_assignment = assignment.copy()
-            new_assignment[var] = value
+            new_state = state.copy()
+            new_state[next_var] = value
 
-            new_clause_status = clause_status.copy()
-            related = get_related_clauses(clauses, var)
-            for idx in related:
-                sat, und = update_clause_status(clauses[idx], new_assignment)
-                new_clause_status[idx] = sat or und
-
-            new_g = len(new_assignment)
-            new_h = heuristic(clauses, new_assignment)
+            new_g = g_score + 1
+            new_h = heuristic(new_state, cnf, all_vars)
             new_f = new_g + new_h
 
-            heapq.heappush(heap, (new_f, new_g, next(counter), new_assignment, new_clause_status))
+            heapq.heappush(open_list, (new_f, new_g, next(counter), new_state))
 
     return None
 
-def solve_sat(filename: str) -> Optional[Dict[int, bool]]:
-    clauses = parse_clauses(filename)
-    return astar_sat(clauses)
 
 if __name__ == "__main__":
-    filename = "..//data//cnf-01.txt"  
-    result = solve_sat(filename)
+    filename = "..//data//test.txt"  
+    clauses = parse_clauses(filename)
+    all_vars = {abs(literal) for clause in clauses for literal in clause}
+
+    result = astar(clauses, all_vars)
     
     if result is None:
         print("No satisfying assignment found.")
     else:
-        print("Satisfying assignment:")
-        for var, value in result.items():
+        print("Available assignment:")
+        for var, value in sorted(result.items()):
             print(f"{'-' if not value else ''}{var} ", end="")
