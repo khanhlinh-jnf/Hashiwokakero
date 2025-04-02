@@ -13,7 +13,7 @@ py main.py
 
 ### Steps:
 1. Enter the number of test cases you want to run.
-2. Provide the required input.
+2. Enter the algorithm you want to use for solving
 3. The output will be generated and saved in the `output` folder.
 
 ---
@@ -23,8 +23,8 @@ The following test cases are available:
 - **Input 1 & 2**: Provided as samples in the assignment.
 - **Input 3**: Another sample from the assignment.
 - **Input 4 & 5**: Custom test cases created for additional verification.
-- **Input 5**: 6×6 grid.
-- **Input 6**: 7×7 grid.
+- **Input 5**: 7x7 grid.
+- **Input 6**: 9x9 grid.
 - **Input 7**: 11×11 grid.
 - **Input 8**: 13×13 grid.
 - **Input 9**: 17×17 grid.
