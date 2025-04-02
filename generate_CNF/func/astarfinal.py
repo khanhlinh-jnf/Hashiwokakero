@@ -1,5 +1,6 @@
 import heapq
 import itertools
+import time
 from typing import List, Dict, Set, Optional
 
 def parse_clauses(filename: str) -> List[List[int]]:
@@ -17,20 +18,23 @@ def check_clause_satisfaction(clause: List[int], assignment: Dict[int, bool]) ->
                 return True
     return False
 
-def count_unsatisfied_clauses(assignment: Dict[int, bool], formula: List[List[int]], 
-                               cache: Dict[frozenset, int]) -> int:
+def weighted_unsatisfied_clauses(assignment: Dict[int, bool], formula: List[List[int]], 
+                                  cache: Dict[frozenset, float]) -> float:
     key = frozenset(assignment.items())
     if key in cache:
         return cache[key]
-    unsatisfied_count = sum(1 for clause in formula if not check_clause_satisfaction(clause, assignment))
-    cache[key] = unsatisfied_count
-    return unsatisfied_count
+    total_weight = 0.0
+    for clause in formula:
+        if not check_clause_satisfaction(clause, assignment):
+            total_weight += 1.0 / len(clause)
+    cache[key] = total_weight
+    return total_weight
 
 def calculate_heuristic(assignment: Dict[int, bool], formula: List[List[int]], 
-                        all_variables: Set[int], cache: Dict[frozenset, int]) -> int:
+                        all_variables: Set[int], cache: Dict[frozenset, float]) -> float:
     remaining_vars = len(all_variables - set(assignment.keys()))
-    unsatisfied = count_unsatisfied_clauses(assignment, formula, cache)
-    return remaining_vars + 2 * unsatisfied
+    weighted_unsat = weighted_unsatisfied_clauses(assignment, formula, cache)
+    return remaining_vars + 2 * weighted_unsat
 
 def verify_assignment_validity(assignment: Dict[int, bool], formula: List[List[int]]) -> bool:
     for clause in formula:
@@ -75,7 +79,6 @@ def unit_propagation(assignment: Dict[int, bool], formula: List[List[int]]) -> D
 def pure_literal_elimination(assignment: Dict[int, bool], formula: List[List[int]]) -> Dict[int, bool]:
     new_assignment = assignment.copy()
     literal_occurrences = {}
-    # For each clause that is not yet satisfied, record the polarity of each unassigned literal.
     for clause in formula:
         if check_clause_satisfaction(clause, new_assignment):
             continue
@@ -83,17 +86,12 @@ def pure_literal_elimination(assignment: Dict[int, bool], formula: List[List[int
             var = abs(literal)
             if var not in new_assignment:
                 literal_occurrences.setdefault(var, set()).add(1 if literal > 0 else -1)
-    # If a variable appears only with one polarity, assign it accordingly.
     for var, signs in literal_occurrences.items():
         if len(signs) == 1:
             new_assignment[var] = True if 1 in signs else False
     return new_assignment
 
 def conflict_analysis(assignment: Dict[int, bool], formula: List[List[int]]) -> List[int]:
-    """
-    A very naive conflict analysis: returns the first fully-assigned clause that is unsatisfied.
-    In a full CDCL, this would analyze an implication graph.
-    """
     for clause in formula:
         if all(abs(lit) in assignment for lit in clause) and not check_clause_satisfaction(clause, assignment):
             return clause
@@ -106,7 +104,6 @@ def astar(formula: List[List[int]], all_variables: Set[int]) -> Optional[Dict[in
     tie_breaker = itertools.count()
 
     initial_assignment = {}
-    # Apply unit propagation and pure literal elimination on the initial state.
     initial_assignment = unit_propagation(initial_assignment, formula)
     initial_assignment = pure_literal_elimination(initial_assignment, formula)
     initial_h = calculate_heuristic(initial_assignment, formula, all_variables, unsatisfied_cache)
@@ -115,7 +112,6 @@ def astar(formula: List[List[int]], all_variables: Set[int]) -> Optional[Dict[in
     while priority_queue:
         f_score, g_score, _, assignment = heapq.heappop(priority_queue)
         
-        # Goal test: if all clauses are satisfied and all variables assigned, return solution.
         if all(check_clause_satisfaction(clause, assignment) for clause in formula) and \
            all(var in assignment for var in all_variables):
             return assignment
@@ -132,17 +128,13 @@ def astar(formula: List[List[int]], all_variables: Set[int]) -> Optional[Dict[in
         for decision in [True, False]:
             new_assignment = assignment.copy()
             new_assignment[next_var] = decision
-            # Apply unit propagation and pure literal elimination after the decision.
             new_assignment = unit_propagation(new_assignment, formula)
             new_assignment = pure_literal_elimination(new_assignment, formula)
             
             if not verify_assignment_validity(new_assignment, formula):
-                # Conflict encountered; perform conflict analysis and learn a clause.
                 learned_clause = conflict_analysis(new_assignment, formula)
                 if learned_clause:
-                    # Add the learned clause to the formula.
                     formula.append(learned_clause)
-                    # Clear cache as formula has changed.
                     unsatisfied_cache.clear()
                 continue
             
@@ -160,8 +152,10 @@ def solve_sat(filename: str) -> Optional[Dict[int, bool]]:
     return astar(cnf, all_vars)
 
 if __name__ == "__main__":
-    filename = "..//data//cnf-09.txt" 
+    filename = "..//data//cnf-08.txt" 
+    start_time = time.time()
     result = solve_sat(filename)
+    end_time = time.time()
     
     if result is None:
         print("No satisfying assignment found.")
@@ -169,3 +163,5 @@ if __name__ == "__main__":
         print("Available assignment:")
         for var, value in sorted(result.items()):
             print(f"{'-' if not value else ''}{var} ", end="")
+
+    print("\nTime taken: {:.2f} seconds".format(end_time - start_time))
