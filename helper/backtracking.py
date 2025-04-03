@@ -132,9 +132,9 @@ def solve_cnf(input_file, file_condition, file_dict, file_output, analysis_file)
     variable_map = load_variable_mapping(file_dict)
     num_variables = len(variable_map)
 
-    start_time = time.time()
+    start_time = time.perf_counter()
     sat, result = dpll(clauses, variable_map, islands)
-    end_time = time.time()
+    end_time = time.perf_counter()
     if sat:
         positive_vars = [var for var in range(1, num_variables + 1) if result[var]]
         with open(file_output, "w") as f:
@@ -142,7 +142,9 @@ def solve_cnf(input_file, file_condition, file_dict, file_output, analysis_file)
                 if variable_map[result][-2] != ")":
                     f.write(f"{variable_map[result]}\n")
         with open(analysis_file, "w") as f:
-            f.write(f"Time: {round((end_time - start_time)*1000)} miliseconds\n")
+            f.write(
+                f"Time: {(end_time - start_time)*1000:.4f} miliseconds\n"
+            )
             for result in positive_vars:
                 f.write(f"{result} ")
         return True
@@ -150,5 +152,7 @@ def solve_cnf(input_file, file_condition, file_dict, file_output, analysis_file)
         with open(file_output, "w") as f:
             f.write("UNSAT\n")
         with open(analysis_file, "w") as f:
-            f.write(f"Time: {round((end_time - start_time)*1000)} miliseconds\n")
+            f.write(
+                f"Time: {(end_time - start_time)*1000:.4f} miliseconds\n"
+            )
         return False

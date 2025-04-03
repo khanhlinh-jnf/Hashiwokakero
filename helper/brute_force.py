@@ -124,7 +124,7 @@ def brute_force(input_file, file_condition, file_dict, file_output, analysis_fil
     numberOfVariables = getNumberOfVariables(file_dict)
     variable_map = load_variable_mapping(file_dict)
     islands = find_islands(read_matrix(input_file))
-    start_time = time.time()
+    start_time = time.perf_counter()
     if checkValidAnswer(cnf, hashMap):
         positive_vars = [var for var in range(1, numberOfVariables + 1) if hashMap[var]]
         edges = [variable_map[var] for var in positive_vars if variable_map[var][-2] == ")"]
@@ -157,7 +157,7 @@ def brute_force(input_file, file_condition, file_dict, file_output, analysis_fil
                                 f.write(f"{variable_map[result]}\n")
                     with open(analysis_file, "w") as f:
                         f.write(
-                            f"Time: {round((time.time() - start_time)*1000)} miliseconds\n"
+                            f"Time: {(time.perf_counter() - start_time)*1000:.4f} miliseconds\n"
                         )
                         for result in positive_vars:
                             f.write(f"{result} ")
@@ -167,5 +167,5 @@ def brute_force(input_file, file_condition, file_dict, file_output, analysis_fil
     with open(file_output, "w") as f:
         f.write("UNSAT\n")
     with open(analysis_file, "w") as f:
-        f.write(f"Time: {round((time.time() - start_time)*1000)} miliseconds\n")
+        f.write(f"Time: {(time.perf_counter() - start_time)*1000:.4f} miliseconds\n")
     return False
