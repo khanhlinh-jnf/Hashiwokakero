@@ -30,6 +30,11 @@ HASHIWOKAKERO/
 ---
 
 ## 🚀 How to Run the Code
+Before running the code, ensure you have installed the required dependencies. You can do this by running:
+
+```bash
+pip install -r requirement.txt
+```
 To execute the program, use the following command in your terminal:
 
 ```bash

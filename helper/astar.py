@@ -171,10 +171,6 @@ def pure_literal_elimination(
 def conflict_analysis(
     assignment: Dict[int, bool], formula: List[List[int]]
 ) -> List[int]:
-    """
-    A very naive conflict analysis: returns the first fully-assigned clause that is unsatisfied.
-    In a full CDCL, this would analyze an implication graph.
-    """
     for clause in formula:
         if all(
             abs(lit) in assignment for lit in clause
