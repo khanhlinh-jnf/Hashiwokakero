@@ -70,5 +70,8 @@ def dnf_to_cnf(file_input, file_output):
                     ) 
 
     with open(file_output, "w") as f:
+        if not cnf_conditions:
+            f.write("1\n")
+            f.write("-1\n")
         for cnf in cnf_conditions:  
             f.write(cnf.strip() + "\n")

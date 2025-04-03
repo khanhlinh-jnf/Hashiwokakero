@@ -125,16 +125,19 @@ def find_subsets_with_greater_k(data, k):
 
 def generate_conditions_of_sum_bridge_of_island(list_of_island, list_of_bridge):
     res = {}
+    valid = True
     for island in list_of_island:
         res[island] = {}
         list_case = find_subsets_with_sum_k(list_of_bridge[island], island[2])
         i = 0
+        if len(list_case) == 0:
+            valid = False
         for case in list_case:
             res[island][i] = {}
             for bridge in case:
                 res[island][i][bridge] = False
             i += 1
-    return res
+    return res, valid
 
 
 def generate_conditions_of_sum_bridge_unvalid_of_island(list_of_island, list_of_bridge):
@@ -211,8 +214,10 @@ def creat_conditions_file(input_file, conditions_file, dict_of_variables_file):
     conditions_of_intersection_bridge = generate_conditions_of_intersection_bridge(
         intersections
     )
-    conditions_of_island_sum_bridge = generate_conditions_of_sum_bridge_of_island(
-        list_of_islands, list_bridge_of_island
+    conditions_of_island_sum_bridge, valid = (
+        generate_conditions_of_sum_bridge_of_island(
+            list_of_islands, list_bridge_of_island
+        )
     )
     conditions_of_island_sum_bridge_unvalid = (
         generate_conditions_of_sum_bridge_unvalid_of_island(
@@ -223,7 +228,6 @@ def creat_conditions_file(input_file, conditions_file, dict_of_variables_file):
         connections
     )
 
-    cout = open(conditions_file, "w")
     dict_of_variables, convert_dict_of_variables, set_of_variables = (
         find_list_of_variables(
             conditions_of_island_sum_bridge,
@@ -236,6 +240,11 @@ def creat_conditions_file(input_file, conditions_file, dict_of_variables_file):
     for x in convert_dict_of_variables:
         dout.write(str(x) + " : " + str(convert_dict_of_variables[x]) + "\n")
     dout.close()
+
+    cout = open(conditions_file, "w")
+    if not valid:
+        cout.close()
+        return
 
     for x in list_of_islands:
         for y in conditions_of_island_sum_bridge[x]:
@@ -286,4 +295,3 @@ def creat_conditions_file(input_file, conditions_file, dict_of_variables_file):
                     cout.write("| ")
             cout.write("\n")
     cout.close()
-    dout.close()

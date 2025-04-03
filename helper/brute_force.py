@@ -138,7 +138,7 @@ def brute_force(input_file, file_condition, file_dict, file_output, analysis_fil
                 f.write(f"Time: {round(time.time() - start_time,2)} seconds\n")
                 for result in positive_vars:
                     f.write(f"{result} ")
-            return
+            return True
     for i in range(1, numberOfVariables + 1):
         combinations = generateCombinations(numberOfVariables, i, excluded)
         if len(combinations) == 0:
@@ -161,10 +161,11 @@ def brute_force(input_file, file_condition, file_dict, file_output, analysis_fil
                         )
                         for result in positive_vars:
                             f.write(f"{result} ")
-                    return
+                    return True
             for literal in combination:
                 hashMap[literal] = True
     with open(file_output, "w") as f:
         f.write("UNSAT\n")
     with open(analysis_file, "w") as f:
         f.write(f"Time: {round((time.time() - start_time)*1000)} miliseconds\n")
+    return False

@@ -76,7 +76,7 @@ def solve_cnf(input_file, file_condition, file_dict, file_output, analysis_file)
                 for result in positive_vars:
                     f.write(f"{result} ")
             solver.delete()
-            return
+            return True
 
         solver.add_clause([-var for var in model]) 
 
@@ -86,3 +86,4 @@ def solve_cnf(input_file, file_condition, file_dict, file_output, analysis_file)
         f.write(f"Time: {round((time.time() - start_time)*1000)} miliseconds\n")
 
     solver.delete()
+    return False

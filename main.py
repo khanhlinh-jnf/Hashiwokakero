@@ -66,5 +66,7 @@ analysis_file = (
 make_conditions.creat_conditions_file(input_file, clauses_file, dict_file)
 convert_dnf_2_cnf.dnf_to_cnf(clauses_file, cnf_file)
 os.remove(clauses_file)
-algorithm(input_file, cnf_file, dict_file, res_file, analysis_file)
-visualize_result.visualize(input_file, res_file, output_file)
+if algorithm(input_file, cnf_file, dict_file, res_file, analysis_file):
+    visualize_result.visualize(input_file, res_file, output_file)
+else:
+    visualize_result.visualize_fail(output_file)

@@ -58,3 +58,8 @@ def visualize(input_file,result_file, output_file):
         for col in row:
             fout.write(col + " ")
         fout.write("\n")
+
+def visualize_fail(output_file):
+    fout = open(output_file, "w")
+    fout.write("No solution found\n")
+    fout.close()

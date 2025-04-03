@@ -7,7 +7,7 @@ import time
 def parse_string_to_tuple_list(string_list):
     tuple_list = []
     for item in string_list:
-        tuple_list.append(eval(item))  # Chuyển đổi chuỗi thành tuple
+        tuple_list.append(eval(item))
     return tuple_list
 
 
@@ -56,8 +56,6 @@ def is_connected(edges, nodes):
 
     return len({find(node[:2]) for node in nodes}) == 1
 
-
-# ---------------------------------------------------------------------------------------
 def parse_clauses(filename: str) -> List[List[int]]:
     with open(filename, "r") as f:
         lines = f.readlines()
@@ -157,7 +155,6 @@ def pure_literal_elimination(
 ) -> Dict[int, bool]:
     new_assignment = assignment.copy()
     literal_occurrences = {}
-    # For each clause that is not yet satisfied, record the polarity of each unassigned literal.
     for clause in formula:
         if check_clause_satisfaction(clause, new_assignment):
             continue
@@ -165,7 +162,6 @@ def pure_literal_elimination(
             var = abs(literal)
             if var not in new_assignment:
                 literal_occurrences.setdefault(var, set()).add(1 if literal > 0 else -1)
-    # If a variable appears only with one polarity, assign it accordingly.
     for var, signs in literal_occurrences.items():
         if len(signs) == 1:
             new_assignment[var] = True if 1 in signs else False
@@ -203,7 +199,6 @@ def astar(input_file, file_condition, file_dict, file_output, analysis_file):
     start_time = time.time()
 
     initial_assignment = {}
-    # Apply unit propagation and pure literal elimination on the initial state.
     initial_assignment = unit_propagation(initial_assignment, formula)
     initial_assignment = pure_literal_elimination(initial_assignment, formula)
     initial_h = calculate_heuristic(
@@ -216,7 +211,6 @@ def astar(input_file, file_condition, file_dict, file_output, analysis_file):
     while priority_queue:
         f_score, g_score, _, assignment = heapq.heappop(priority_queue)
 
-        # Goal test: if all clauses are satisfied and all variables assigned, return solution.
         if all(
             check_clause_satisfaction(clause, assignment) for clause in formula
         ) and all(var in assignment for var in all_variables):
@@ -240,7 +234,7 @@ def astar(input_file, file_condition, file_dict, file_output, analysis_file):
                     )
                     for result in positive_vars:
                         f.write(f"{result} ")
-                return
+                return True
 
         state_key = frozenset(assignment.items())
         if state_key in closed_set:
@@ -254,17 +248,13 @@ def astar(input_file, file_condition, file_dict, file_output, analysis_file):
         for decision in [True, False]:
             new_assignment = assignment.copy()
             new_assignment[next_var] = decision
-            # Apply unit propagation and pure literal elimination after the decision.
             new_assignment = unit_propagation(new_assignment, formula)
             new_assignment = pure_literal_elimination(new_assignment, formula)
 
             if not verify_assignment_validity(new_assignment, formula):
-                # Conflict encountered; perform conflict analysis and learn a clause.
                 learned_clause = conflict_analysis(new_assignment, formula)
                 if learned_clause:
-                    # Add the learned clause to the formula.
                     formula.append(learned_clause)
-                    # Clear cache as formula has changed.
                     unsatisfied_cache.clear()
                 continue
 
@@ -282,3 +272,4 @@ def astar(input_file, file_condition, file_dict, file_output, analysis_file):
         f.write("UNSAT\n")
     with open(analysis_file, "w") as f:
         f.write(f"Time: {round((time.time() - start_time)*1000)} miliseconds\n")
+    return False

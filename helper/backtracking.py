@@ -145,8 +145,10 @@ def solve_cnf(input_file, file_condition, file_dict, file_output, analysis_file)
             f.write(f"Time: {round((end_time - start_time)*1000)} miliseconds\n")
             for result in positive_vars:
                 f.write(f"{result} ")
+        return True
     else:
         with open(file_output, "w") as f:
             f.write("UNSAT\n")
         with open(analysis_file, "w") as f:
             f.write(f"Time: {round((end_time - start_time)*1000)} miliseconds\n")
+        return False
