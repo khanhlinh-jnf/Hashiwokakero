@@ -1,14 +1,17 @@
 import time
 
+
 def parse_string_to_tuple_list(string_list):
     tuple_list = []
     for item in string_list:
         tuple_list.append(eval(item))
     return tuple_list
 
+
 def read_matrix(file_path):
     with open(file_path, "r") as filein:
         return [[int(col) for col in line.split(",")] for line in filein]
+
 
 def find_islands(matrix):
     return [
@@ -18,6 +21,7 @@ def find_islands(matrix):
         if matrix[r][c] != 0
     ]
 
+
 def load_variable_mapping(dict_file):
     variable_map = {}
     with open(dict_file, "r") as f:
@@ -25,6 +29,7 @@ def load_variable_mapping(dict_file):
             key, value = line.strip().split(":", 1)
             variable_map[int(key)] = value.strip()
     return variable_map
+
 
 def is_connected(edges, nodes):
     parent = {}
@@ -48,6 +53,7 @@ def is_connected(edges, nodes):
 
     return len({find(node[:2]) for node in nodes}) == 1
 
+
 def unit_propagate(cnf, assignment):
     while True:
         unit_clauses = [c[0] for c in cnf if len(c) == 1]
@@ -63,6 +69,7 @@ def unit_propagate(cnf, assignment):
 
     return cnf, assignment
 
+
 def pure_literal_elimination(cnf, assignment):
     literals = {lit for clause in cnf for lit in clause}
     pure_literals = {lit for lit in literals if -lit not in literals}
@@ -73,17 +80,26 @@ def pure_literal_elimination(cnf, assignment):
 
     return cnf, assignment
 
+
 def dpll(cnf, variable_map, island, assignment={}):
     cnf, assignment = unit_propagate(cnf, assignment)
     cnf, assignment = pure_literal_elimination(cnf, assignment)
-    if not cnf: 
-        return True, assignment
+    if not cnf:
+        positive_vars = [var for var in range(1, len(variable_map) + 1) if assignment[var]]
+        edges = [
+            variable_map[var] for var in positive_vars if variable_map[var][-2] == ")"
+        ]
+        edges = parse_string_to_tuple_list(edges)
+        if is_connected(edges, island):
+            return True, assignment
+        else:
+            return False, None
     for clause in cnf:
         if len(clause) == 0:
             return False, None
-    
+
     variable = abs(cnf[0][0])
-    
+
     sat, result = dpll(
         [
             [lit for lit in clause if lit != -variable]
@@ -95,13 +111,7 @@ def dpll(cnf, variable_map, island, assignment={}):
         {**assignment, variable: True},
     )
     if sat:
-        positive_vars = [var for var in range(1, len(variable_map) + 1) if result[var]]
-        edges = [
-            variable_map[var] for var in positive_vars if variable_map[var][-2] == ")"
-        ]
-        edges = parse_string_to_tuple_list(edges)
-        if is_connected(edges, island):
-            return True, result
+        return True, result
 
     sat, result = dpll(
         [
@@ -114,15 +124,10 @@ def dpll(cnf, variable_map, island, assignment={}):
         {**assignment, variable: False},
     )
     if sat:
-        positive_vars = [var for var in range(1, len(variable_map) + 1) if result[var]]
-        edges = [
-            variable_map[var] for var in positive_vars if variable_map[var][-2] == ")"
-        ]
-        edges = parse_string_to_tuple_list(edges)
-        if is_connected(edges, island):
-            return True, result
+        return True, result
 
     return False, None
+
 
 def solve_cnf(input_file, file_condition, file_dict, file_output, analysis_file):
     clauses = []
@@ -142,9 +147,7 @@ def solve_cnf(input_file, file_condition, file_dict, file_output, analysis_file)
                 if variable_map[result][-2] != ")":
                     f.write(f"{variable_map[result]}\n")
         with open(analysis_file, "w") as f:
-            f.write(
-                f"Time: {(end_time - start_time)*1000:.4f} miliseconds\n"
-            )
+            f.write(f"Time: {(end_time - start_time)*1000:.4f} miliseconds\n")
             for result in positive_vars:
                 f.write(f"{result} ")
         return True
@@ -152,7 +155,5 @@ def solve_cnf(input_file, file_condition, file_dict, file_output, analysis_file)
         with open(file_output, "w") as f:
             f.write("UNSAT\n")
         with open(analysis_file, "w") as f:
-            f.write(
-                f"Time: {(end_time - start_time)*1000:.4f} miliseconds\n"
-            )
+            f.write(f"Time: {(end_time - start_time)*1000:.4f} miliseconds\n")
         return False

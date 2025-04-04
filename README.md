@@ -21,8 +21,8 @@ HASHIWOKAKERO/
 │   ├── make_conditions.py          # Generates conditions or constraints for the Hashiwokakero puzzle.
 │   ├── pySAT.py                    # Helper functions for integrating PySAT with the project.
 │   ├── visualize_result.py         # Visualizes the results of the solving algorithms.
-├── input/
-├── output/
+├── Input/
+├── Output/
 ├── main.py                         # Entry point of the program.
 ├── README.md
 ├── requirement.txt                 # Dependencies for the project.                               
@@ -48,24 +48,9 @@ py main.py
 
 ---
 
-## Description of the input
-- input 1 is sample in the assignment
-- input 2 is sample in the assignment
-- input 3 is sample in the assignment
-- input 4 and 5, I created them by myself to test the code
-- input 5 is 6x6
-- input 6 is 7x7
-- input 7 is 11x11
-- input 8 is 13x13
-- input 9 is 17x17
-- input 10 is 20x20
-
 ## 📥 Input Description
 The following test cases are available:
-- **Input 1 & 2**: Provided as samples in the assignment.
-- **Input 3**: Another sample from the assignment.
-- **Input 4 & 5**: Custom test cases created for additional verification.
-- **Input 5**: 7x7 grid.
+- **Input 1 to Input 5**: 7x7 grid.
 - **Input 6**: 9x9 grid.
 - **Input 7**: 11×11 grid.
 - **Input 8**: 13×13 grid.

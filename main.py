@@ -28,14 +28,14 @@ folder = name_folder[algo - 1]
 algorithm = algorithms[algo - 1]
 
 input_file = (
-    "input/" + "input-" + choice + ".txt"
+    "Input/" + "input-" + choice + ".txt"
     if int(choice) > 9
-    else "input/input-0" + choice + ".txt"
+    else "Input/input-0" + choice + ".txt"
 )
 output_file = (
-    "output/" + folder + "output-" + choice + ".txt"
+    "Output/" + folder + "output-" + choice + ".txt"
     if int(choice) > 9
-    else "output/" + folder + "output-0" + choice + ".txt"
+    else "Output/" + folder + "output-0" + choice + ".txt"
 )
 clauses_file = (
     "data/" + folder + "clauses-" + choice + ".txt"
