@@ -7,25 +7,30 @@ This project explores AI techniques to solve the **Hashiwokakero (Bridges)** puz
 ## Project Structure
 ```
 HASHIWOKAKERO/
-|── data/                           # Store data that related to logic and solving problem of each algorithms.
-│   ├── astar/                      
+|── data/                               # Store data that related to logic and solving problem of each algorithms.
+│   ├── astar/     
+│   │   ├── analysis-0X.txt             # Runtime and numerical results of A* algorithm with test number X.
+│   │   ├── cnf-0X.txt                  # Generated CNF data for A* problem solving with test number X.
+│   │   ├── dict_of_variables-0X.txt    # Maps variables to literal propositions for A* with test number X.
+│   │   ├── result-0X.txt               # Final edges connecting islands from A* result with test number X.
 │   ├── backtracking/
 │   ├── brute_force/
 │   ├── pySAT/
 ├── helper/
-│   ├── pycache/                    # Compiled Python cache files.
-│   ├── astar.py                    # Helper functions specific to the A* algorithm implementation.
-│   ├── backtracking.py             # Helper functions specific to the backtracking algorithm implementation.
-│   ├── brute_force.py              # Helper functions specific to the brute-force algorithm implementation.
-│   ├── convert_dnf_2_cnf.py        # Converts Disjunctive Normal Form (DNF) to Conjunctive Normal Form (CNF) for SAT solving.
-│   ├── make_conditions.py          # Generates conditions or constraints for the Hashiwokakero puzzle.
-│   ├── pySAT.py                    # Helper functions for integrating PySAT with the project.
-│   ├── visualize_result.py         # Visualizes the results of the solving algorithms.
+│   ├── pycache/                        # Compiled Python cache files.
+│   ├── astar.py                        # Helper functions specific to the A* algorithm implementation.
+│   ├── backtracking.py                 # Helper functions specific to the backtracking algorithm implementation.
+│   ├── brute_force.py                  # Helper functions specific to the brute-force algorithm implementation.
+│   ├── convert_dnf_2_cnf.py            # Converts Disjunctive Normal Form (DNF) to Conjunctive Normal Form (CNF)
+│   ├── make_conditions.py              # Generates conditions or constraints for the Hashiwokakero puzzle.
+│   ├── pySAT.py                        # Helper functions for integrating PySAT with the project.
+│   ├── visualize_result.py             # Visualizes the results of the solving algorithms.
 ├── Input/
 ├── Output/
-├── main.py                         # Entry point of the program.
+├── main.py                             # Entry point of the program.
 ├── README.md
-├── requirement.txt                 # Dependencies for the project.                               
+├── requirement.txt                     # Dependencies for the project.   
+├── demo_video.txt                      # Show Video's URL                            
 ```
 ---
 
